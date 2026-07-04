@@ -1,0 +1,16 @@
+{
+  "name": "WWK Student Care",
+  "short_name": "WWK Care",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#4F46E5",
+  "theme_color": "#4F46E5",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2940/2940651.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
