@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WWK Student Care - โรงเรียนวาวีวิทยาคม</title>
+    <!-- Tailwind CSS สำหรับการจัดหน้าจออย่างรวดเร็ว -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Fonts Font ภาษาไทยสารบัน/Prompt -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome สำหรับไอคอน -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Manifest สำหรับ PWA -->
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body { font-family: 'Prompt', sans-serif; }
+        .theme-transition { transition: all 0.5s ease; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col theme-transition" id="body-bg">
+
+    <!-- ================= 1. หน้า LOGIN ================= -->
+    <div id="login-page" class="flex-1 flex items-center justify-center p-4">
+        <div class="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl max-w-md w-full border border-gray-100 text-center">
+            <!-- โลโก้จำลองและชื่อโรงเรียน -->
+            <div class="mb-6">
+                <div class="w-24 h-24 bg-gradient-to-tr from-amber-500 to-red-600 rounded-full flex items-center justify-center mx-auto shadow-md mb-3">
+                    <i class="fa-solid fa-school text-white text-4xl"></i>
+                </div>
+                <h1 class="text-xl font-bold text-gray-800">โรงเรียนวาวีวิทยาคม</h1>
+                <p class="text-sm text-gray-500 font-medium">Waweewittayakom School</p>
+                <div class="h-px bg-gray-200 my-4"></div>
+                <h2 class="text-lg font-bold text-gray-700">WWK Student Care</h2>
+                <p class="text-xs text-gray-400">ระบบดูแลช่วยเหลือนักเรียนครบวงจร</p>
+            </div>
+
+            <!-- ฟอร์มล็อกอิน -->
+            <div class="space-y-4 text-left">
+                <!-- เลือกบทบาท (เปลี่ยนสีตามบทบาทที่เลือก) -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">เลือกบทบาทผู้ใช้งาน</label>
+                    <select id="role-select" onchange="changeThemeByRole(this.value)" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-offset-1 focus:outline-none transition">
+                        <option value="default">-- กรุณาเลือกบทบาท --</option>
+                        <option value="director">🟣 ผู้อำนวยการ (Director)</option>
+                        <option value="admin">🌸 ผู้ดูแลระบบ (Admin)</option>
+                        <option value="teacher">🟠 ครูที่ปรึกษา (Teacher)</option>
+                        <option value="student">🔵 นักเรียน (Student)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ใช้งาน (Username)</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400"><i class="fa-solid fa-user"></i></span>
+                        <input type="text" placeholder="กรอกชื่อผู้ใช้งาน" class="w-full pl-10 pr-3 p-3 border border-gray-300 rounded-xl focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน (Password)</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400"><i class="fa-solid fa-lock"></i></span>
+                        <input type="password" placeholder="กรอกรหัสผ่าน" class="w-full pl-10 pr-3 p-3 border border-gray-300 rounded-xl focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between text-sm">
+                    <label class="flex items-center text-gray-600 cursor-pointer">
+                        <input type="checkbox" class="rounded text-indigo-600 mr-2"> จำฉันไว้ในระบบ
+                    </label>
+                    <a href="#" class="text-gray-400 hover:underline">ลืมรหัสผ่าน?</a>
+                </div>
+
+                <button onclick="login()" id="btn-login" class="w-full py-3 bg-gray-700 text-white font-medium rounded-xl hover:opacity-90 shadow-lg transition cursor-pointer text-center">
+                    เข้าสู่ระบบ <i class="fa-solid fa-right-to-bracket ml-1"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================= 2. หน้าแอปหลัก (MAIN DASHBOARD) ================= -->
+    <div id="main-app" class="hidden flex-1 flex flex-col">
+        <!-- แถบเมนูด้านบน Navigation -->
+        <nav class="bg-white shadow-sm border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center text-white"><i class="fa-solid fa-school"></i></div>
+                <div>
+                    <span class="font-bold block text-gray-800">WWK Student Care</span>
+                    <span class="text-xs text-gray-500" id="user-role-display">บทบาท: ครูที่ปรึกษา</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button onclick="logout()" class="text-sm font-medium bg-red-50 text-red-600 px-4 py-2 rounded-xl hover:bg-red-100 transition">
+                    ออกจากระบบ <i class="fa-solid fa-power-off ml-1"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- พื้นที่แสดงเนื้อหาหลัก -->
+        <main class="p-6 max-w-7xl w-full mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 flex-1">
+            
+            <!-- เมนูด้านข้าง / รายชื่อโมดูล -->
+            <div class="md:col-span-1 bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col space-y-2">
+                <p class="text-xs font-bold text-gray-400 px-3 uppercase tracking-wider mb-2">โมดูลระบบหลัก</p>
+                <button onclick="switchTab('dashboard-tab')" class="tab-btn w-full text-left p-3 rounded-xl bg-gray-100 text-gray-800 font-medium flex items-center space-x-3 transition"><i class="fa-solid fa-chart-pie text-lg text-indigo-500"></i> <span>Dashboard 360°</span></button>
+                <button onclick="switchTab('profile-tab')" class="tab-btn w-full text-left p-3 rounded-xl text-gray-600 hover:bg-gray-50 font-medium flex items-center space-x-3 transition"><i class="fa-solid fa-address-card text-lg text-emerald-500"></i> <span>Student Profile</span></button>
+                <button onclick="switchTab('homevisit-tab')" class="tab-btn w-full text-left p-3 rounded-xl text-gray-600 hover:bg-gray-50 font-medium flex items-center space-x-3 transition"><i class="fa-solid fa-house-chimney text-lg text-amber-500"></i> <span>Home Visit (เยี่ยมบ้าน)</span></button>
+                <button onclick="switchTab('behavior-tab')" class="tab-btn w-full text-left p-3 rounded-xl text-gray-600 hover:bg-gray-50 font-medium flex items-center space-x-3 transition"><i class="fa-solid fa-star text-lg text-yellow-500"></i> <span>Behavior (พฤติกรรม)</span></button>
+                <button onclick="switchTab('screening-tab')" class="tab-btn w-full text-left p-3 rounded-xl text-gray-600 hover:bg-gray-50 font-medium flex items-center space-x-3 transition"><i class="fa-solid fa-heart text-lg text-rose-500"></i> <span>Student Screening (SDQ)</span></button>
+            </div>
+
+            <!-- ส่วนแสดงรายละเอียดแต่ละโมดูล (Tabs Content) -->
+            <div class="md:col-span-3 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                
+                <!-- Tab 1: Dashboard -->
+                <div id="dashboard-tab" class="tab-content space-y-6">
+                    <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+                        <h3 class="text-xl font-bold text-gray-800">📊 Dashboard สรุปข้อมูลภาพรวม</h3>
+                        <span class="bg-green-100 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full"><i class="fa-solid fa-circle text-[8px] mr-1 align-middle"></i>Real-time</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="p-4 bg-blue-50 border border-blue-100 rounded-xl">
+                            <span class="text-sm text-blue-600 font-medium">นักเรียนทั้งหมด</span>
+                            <h4 class="text-3xl font-bold text-blue-900 mt-1">420 คน</h4>
+                        </div>
+                        <div class="p-4 bg-amber-50 border border-amber-100 rounded-xl">
+                            <span class="text-sm text-amber-600 font-medium">บันทึกเยี่ยมบ้านแล้ว</span>
+                            <h4 class="text-3xl font-bold text-amber-900 mt-1">85%</h4>
+                        </div>
+                        <div class="p-4 bg-rose-50 border border-rose-100 rounded-xl">
+                            <span class="text-sm text-rose-600 font-medium">กลุ่มเสี่ยง (SDQ)</span>
+                            <h4 class="text-3xl font-bold text-rose-900 mt-1">12 คน</h4>
+                        </div>
+                    </div>
+                    <div class="p-4 border border-gray-100 rounded-xl bg-gray-50 text-center text-gray-400 py-12">
+                        <i class="fa-solid fa-chart-line text-4xl mb-2"></i>
+                        <p>พื้นที่แสดงกราฟสถิติพฤติกรรมและการมาเรียนรายสัปดาห์</p>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Student Profile -->
+                <div id="profile-tab" class="tab-content hidden space-y-4">
+                    <h3 class="text-xl font-bold text-gray-800 border-b pb-3">👨‍🎓 Student Profile (ข้อมูลนักเรียน)</h3>
+                    <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6 p-4 bg-gray-50 rounded-xl">
+                        <div class="w-24 h-24 bg-gray-300 rounded-full flex items-center justify-center text-gray-500 text-3xl font-bold overflow-hidden shadow-inner">
+                            <i class="fa-solid fa-user-gradient"></i>
+                        </div>
+                        <div class="space-y-1 text-center sm:text-left">
+                            <h4 class="text-lg font-bold text-gray-800">นายสมชาย รักดี</h4>
+                            <p class="text-sm text-gray-500">ชั้นมัธยมศึกษาปีที่ 5/1 | เลขที่ 1</p>
+                            <p class="text-xs bg-indigo-100 text-indigo-700 font-medium px-2 py-0.5 rounded-full inline-block">เลขประจำตัว: 12345</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Home Visit (ระบบบันทึกการเยี่ยมบ้าน) -->
+                <div id="homevisit-tab" class="tab-content hidden space-y-6">
+                    <div class="flex justify-between items-center border-b pb-3">
+                        <h3 class="text-xl font-bold text-gray-800">🏠 บันทึกข้อมูลการเยี่ยมบ้าน</h3>
+                        <button onclick="alert('ระบบจำลองการดาวน์โหลดรายงาน PDF')" class="bg-indigo-600 text-white text-xs px-3 py-2 rounded-lg hover:bg-indigo-700 transition">
+                            <i class="fa-solid fa-file-pdf mr-1"></i> ออกรายงาน PDF
+                        </button>
+                    </div>
+                    
+                    <form class="space-y-6 text-sm">
+                        <!-- สภาพแวดล้อม -->
+                        <div class="bg-gray-50 p-4 rounded-xl space-y-3">
+                            <h4 class="font-bold text-gray-700 border-b pb-1"><i class="fa-solid fa-cloud-sun text-amber-500 mr-1"></i> สภาพแวดล้อมและครอบครัว</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-600 mb-1">สถานะที่อยู่อาศัย</label>
+                                    <select class="w-full p-2 border border-gray-300 rounded-lg bg-white"><option>บ้านตนเอง</option><option>บ้านเช่า</option><option>หอพัก</option><option>มูลนิธิ</option></select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-600 mb-1">สถานภาพครอบครัว</label>
+                                    <select class="w-full p-2 border border-gray-300 rounded-lg bg-white"><option>อยู่ร่วมกัน</option><option>หย่าร้าง</option><option>แยกกันอยู่</option></select>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-medium text-gray-600 mb-1">รายได้รวมของครอบครัวต่อปี (บาท)</label>
+                                    <input type="number" placeholder="เช่น 150000" class="w-full p-2 border border-gray-300 rounded-lg bg-white">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- พฤติกรรม -->
+                        <div class="bg-gray-50 p-4 rounded-xl space-y-3">
+                            <h4 class="font-bold text-gray-700 border-b pb-1"><i class="fa-solid fa-book-reader text-indigo-500 mr-1"></i> พฤติกรรมและการเรียน</h4>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">พฤติกรรมที่น่าเป็นห่วง/ต้องการความช่วยเหลือพิเศษ</label>
+                                <textarea rows="2" placeholder="ระบุเพิ่มเติมถ้ามี..." class="w-full p-2 border border-gray-300 rounded-lg bg-white"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- แนบรูปภาพและลงชื่อ -->
+                        <div class="bg-gray-50 p-4 rounded-xl space-y-3">
+                            <h4 class="font-bold text-gray-700 border-b pb-1"><i class="fa-solid fa-camera text-emerald-500 mr-1"></i> หลักฐานและยืนยันข้อมูล</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-600 mb-1">อัปโหลดรูปภาพบ้าน</label>
+                                    <input type="file" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-600 mb-1">ลายมือชื่อผู้ปกครองรับรองข้อมูล (พิมพ์ชื่อ)</label>
+                                    <input type="text" placeholder="ลงชื่อผู้ปกครอง" class="w-full p-2 border border-gray-300 rounded-lg bg-white">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="alert('บันทึกข้อมูลสำเร็จ!')" class="w-full py-3 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition shadow-md">บันทึกข้อมูลการเยี่ยมบ้าน</button>
+                    </form>
+                </div>
+
+                <!-- Tab 4: Behavior -->
+                <div id="behavior-tab" class="tab-content hidden space-y-4">
+                    <h3 class="text-xl font-bold text-gray-800 border-b pb-3">⭐ Behavior (การจัดการคะแนนพฤติกรรม)</h3>
+                    <div class="flex space-x-2">
+                        <button onclick="alert('บวก 5 คะแนน')" class="px-4 py-2 bg-green-100 text-green-700 rounded-lg font-medium text-sm hover:bg-green-200 transition">+ เพิ่มคะแนนความประพฤติ</button>
+                        <button onclick="alert('ตัด 5 คะแนน')" class="px-4 py-2 bg-red-100 text-red-700 rounded-lg font-medium text-sm hover:bg-red-200 transition">- ตัดคะแนนพฤติกรรม</button>
+                    </div>
+                </div>
+
+                <!-- Tab 5: Screening (SDQ) -->
+                <div id="screening-tab" class="tab-content hidden space-y-4">
+                    <h3 class="text-xl font-bold text-gray-800 border-b pb-3">❤️ Student Screening (ประเมิน SDQ / EQ)</h3>
+                    <p class="text-sm text-gray-600">แบบประเมินตนเองและคัดกรองนักเรียนรายบุคคลจำแนกกลุ่มปกติ กลุ่มเสี่ยง และกลุ่มมีปัญหา</p>
+                    <div class="border border-gray-200 rounded-xl overflow-hidden text-sm">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 font-semibold">
+                                    <th class="p-3">ชื่อ-นามสกุล</th>
+                                    <th class="p-3">แบบประเมิน</th>
+                                    <th class="p-3">สถานะผลลัพธ์</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100 text-gray-700">
+                                <tr>
+                                    <td class="p-3">นายสมชาย รักดี</td>
+                                    <td class="p-3">SDQ (ครูประเมิน)</td>
+                                    <td class="p-3"><span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs font-medium">กลุ่มปกติ</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3">นางสาวใจดี ขยันเรียน</td>
+                                    <td class="p-3">SDQ (ครูประเมิน)</td>
+                                    <td class="p-3"><span class="bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full text-xs font-medium">กลุ่มเสี่ยง</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ส่วนท้ายวิดเจ็ตแสดงข้อมูลระบบส่วนล่างสุด -->
+    <footer class="bg-white border-t border-gray-200 text-center py-4 text-xs text-gray-400">
+        &copy; 2026 WWK Student Care • โรงเรียนวาวีวิทยาคม • จุดเด่นระบบ PWA & Real-time Dashboard
+    </footer>
+
+    <!-- ================= Logic ทำงานของระบบด้วย JavaScript ================= -->
+    <script>
+        // ฟังก์ชันเปลี่ยนสีพื้นหลังตามบทบาทที่เลือกตอนล็อกอิน
+        function changeThemeByRole(role) {
+            const bodyBg = document.getElementById('body-bg');
+            const btnLogin = document.getElementById('btn-login');
+            
+            // ล้างคลาสสีเก่าออกให้หมดก่อน
+            bodyBg.className = "bg-gray-50 min-h-screen flex flex-col theme-transition";
+            btnLogin.className = "w-full py-3 text-white font-medium rounded-xl hover:opacity-90 shadow-lg transition cursor-pointer text-center ";
+
+            if (role === 'director') {
+                bodyBg.classList.add('bg-purple-900'); // ผู้อำนวยการ = สีม่วง
+                btnLogin.classList.add('bg-purple-600');
+            } else if (role === 'admin') {
+                bodyBg.classList.add('bg-pink-500');   // ผู้ดูแลระบบ = สีชมพู
+                btnLogin.classList.add('bg-pink-600');
+            } else if (role === 'teacher') {
+                bodyBg.classList.add('bg-orange-500'); // ครูที่ปรึกษา = สีส้ม
+                btnLogin.classList.add('bg-orange-600');
+            } else if (role === 'student') {
+                bodyBg.classList.add('bg-sky-400');   // นักเรียน = สีฟ้า
+                btnLogin.classList.add('bg-sky-600');
+            } else {
+                bodyBg.classList.add('bg-gradient-to-br', 'from-indigo-900', 'to-slate-900');
+                btnLogin.classList.add('bg-indigo-600');
+            }
+        }
+
+        // ตั้งค่าสีเริ่มต้นเมื่อเปิดเว็บหน้าแรก
+        changeThemeByRole('default');
+
+        // ฟังก์ชันจำลองการล็อกอิน
+        function login() {
+            const roleSelect = document.getElementById('role-select').value;
+            if (roleSelect === 'default') {
+                alert('กรุณาเลือกบทบาทผู้ใช้งานก่อนเข้าสู่ระบบครับ');
+                return;
+            }
+            
+            // ปรับข้อความแสดงผลบทบาทในหน้าหลัก
+            const rolesText = { director: '🟣 ผู้อำนวยการ', admin: '🌸 ผู้ดูแลระบบ', teacher: '🟠 ครูที่ปรึกษา', student: '🔵 นักเรียน' };
+            document.getElementById('user-role-display').innerText = `บทบาท: ${rolesText[roleSelect]}`;
+
+            // ซ่อนหน้าล็อกอิน เปิดหน้าเว็บหลัก
+            document.getElementById('login-page').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            document.getElementById('body-bg').className = "bg-gray-50 min-h-screen flex flex-col theme-transition"; // รีเซ็ตพื้นหลังเป็นสีเทาสบายตาตอนทำงาน
+        }
+
+        // ฟังก์ชันออกจากระบบ
+        function logout() {
+            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('login-page').classList.remove('hidden');
+            document.getElementById('role-select').value = 'default';
+            changeThemeByRole('default');
+        }
+
+        // ฟังก์ชันการสลับสับเปลี่ยนแท็บเมนูซ้ายมือ
+        function switchTab(tabId) {
+            // ซ่อนเนื้อหาทุกแท็บ
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.add('hidden'));
+            
+            // แสดงแท็บที่เลือก
+            document.getElementById(tabId).classList.remove('hidden');
+
+            // เปลี่ยนสถานะปุ่มเมนูให้ดูไฮไลต์
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-gray-100', 'text-gray-800');
+                btn.classList.add('text-gray-600', 'hover:bg-gray-50');
+            });
+            event.currentTarget.classList.add('bg-gray-100', 'text-gray-800');
+        }
+
+        // ลงทะเบียน Service Worker สำหรับเทคโนโลยี PWA เบื้องต้น
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration skipped'));
+        }
+    </script>
+</body>
+</html>
